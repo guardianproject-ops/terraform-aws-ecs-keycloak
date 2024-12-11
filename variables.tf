@@ -321,3 +321,9 @@ variable "alarms_sns_topics_arns" {
   default     = []
   description = "A list of SNS topic arns that will be the actions for cloudwatch alarms"
 }
+
+variable "exec_enabled" {
+  type        = bool
+  description = "Specifies whether to enable Amazon ECS Exec for the tasks within the service"
+  default     = false
+}

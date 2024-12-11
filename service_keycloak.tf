@@ -232,14 +232,15 @@ module "keycloak" {
     }
   ]
 
-  ecs_alarms_enabled             = false
-  ecs_cluster_arn                = module.ecs_cluster.arn
-  ecs_cluster_name               = module.ecs_cluster.name
-  ecs_security_group_ids         = [aws_security_group.keycloak[0].id]
-  ecs_private_subnet_ids         = var.public_subnet_ids
-  assign_public_ip               = true
-  ignore_changes_task_definition = false
 
+  exec_enabled                                    = var.exec_enabled
+  ecs_alarms_enabled                              = false
+  ecs_cluster_arn                                 = module.ecs_cluster.arn
+  ecs_cluster_name                                = module.ecs_cluster.name
+  ecs_security_group_ids                          = [aws_security_group.keycloak[0].id]
+  ecs_private_subnet_ids                          = var.public_subnet_ids
+  assign_public_ip                                = true
+  ignore_changes_task_definition                  = false
   alb_security_group                              = module.alb.security_group_id
   alb_target_group_alarms_enabled                 = true
   alb_target_group_alarms_3xx_threshold           = 25

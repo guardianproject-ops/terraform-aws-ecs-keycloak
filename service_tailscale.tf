@@ -14,6 +14,7 @@ resource "aws_efs_file_system" "tailscale_state" {
   kms_key_id     = local.kms_key_arn
   tags           = module.this.tags
 }
+
 resource "aws_efs_access_point" "tailscale_state" {
   count          = module.this.enabled ? 1 : 0
   file_system_id = aws_efs_file_system.tailscale_state[0].id
@@ -94,17 +95,25 @@ module "tailscale_def" {
       name  = "TS_USERSPACE",
       value = "true"
     },
-    #{
-    #  name  = "TS_SOCKS5_SERVER"
-    #  value = "localhost:1055"
-    #},
-    #{
-    #  name  = "TS_OUTBOUND_HTTP_PROXY_LISTEN"
-    #  value = "localhost:1055"
-    #},
     {
-      name  = "TS_HEALTHCHECK_ADDR_PORT"
+      name  = "TS_SOCKS5_SERVER"
+      value = "localhost:1055"
+    },
+    {
+      name  = "TS_OUTBOUND_HTTP_PROXY_LISTEN"
+      value = "localhost:1055"
+    },
+    {
+      name  = "TS_LOCAL_ADDR_PORT"
       value = "0.0.0.0:${local.port_tailscale_healthcheck}"
+    },
+    {
+      name  = "TS_ENABLE_METRICS"
+      value = "true"
+    },
+    {
+      name  = "TS_ENABLE_HEALTH_CHECK"
+      value = "true"
     },
     {
       name  = "TS_SERVE_CONFIG"
@@ -133,6 +142,7 @@ module "tailscale_ingress" {
   subnet_ids                         = var.public_subnet_ids
   assign_public_ip                   = true
   ignore_changes_task_definition     = false
+  exec_enabled                       = var.exec_enabled
   desired_count                      = 1
   deployment_maximum_percent         = 100 # we only want one at a time, to prevent tailscale nodes from stepping on eachother
   deployment_minimum_healthy_percent = 0
