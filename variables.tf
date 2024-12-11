@@ -22,6 +22,13 @@ The ids for the public subnets that ECS will be deployed into
 EOT
 }
 
+variable "public_subnet_cidrs" {
+  type        = list(string)
+  description = <<EOT
+The cidr blocks for the public subnets that ECS will be deployed into
+EOT
+}
+
 variable "private_subnet_ids" {
   type        = list(string)
   description = <<EOT
@@ -307,4 +314,10 @@ variable "deletion_protection_enabled" {
   type        = bool
   description = "Whether or not to enable deletion protection on things that support it"
   default     = true
+}
+
+variable "alarms_sns_topics_arns" {
+  type        = list(string)
+  default     = []
+  description = "A list of SNS topic arns that will be the actions for cloudwatch alarms"
 }

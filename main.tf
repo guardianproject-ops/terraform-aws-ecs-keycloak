@@ -5,7 +5,6 @@ locals {
   create_kms_key                    = var.kms_key_arn == null ? true : false
   kms_key_arn                       = var.kms_key_arn == null ? module.kms_key.key_arn : var.kms_key_arn
   deletion_protection_enabled       = var.deletion_protection_enabled
-  alb_actual_cidrs                  = module.this.enabled ? formatlist("%s/32", data.aws_network_interface.alb[*].private_ip) : []
   keycloak_cluster_s3_bucket_name   = aws_s3_bucket.keycloak_clustering[0].id
   keycloak_cluster_s3_bucket_arn    = aws_s3_bucket.keycloak_clustering[0].arn
   keycloak_cluster_s3_bucket_prefix = "jgroups/${module.this.id}"
@@ -188,20 +187,6 @@ module "alb" {
   health_check_matcher                    = "200-499"
   health_check_port                       = local.port_keycloak_management
   alb_access_logs_s3_bucket_force_destroy = !local.deletion_protection_enabled
-}
-
-# this is a little trick to find out the ips of the alb in your subnet
-data "aws_network_interface" "alb" {
-  count = module.this.enabled ? length(var.public_subnet_ids) : 0
-
-  filter {
-    name   = "description"
-    values = ["ELB ${module.alb.alb_arn_suffix}"]
-  }
-  filter {
-    name   = "subnet-id"
-    values = [var.public_subnet_ids[count.index]]
-  }
 }
 
 ################

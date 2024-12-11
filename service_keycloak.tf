@@ -74,7 +74,7 @@ locals {
       # ref: https://www.keycloak.org/server/all-config#option-extended-proxy-trusted-addresses
       # ref: https://www.keycloak.org/server/reverseproxy#_trusted_proxies
       name  = "KC_PROXY_TRUSTED_ADDRESSES"
-      value = join(",", local.alb_actual_cidrs)
+      value = join(",", var.public_subnet_cidrs)
     },
     {
       # ref: https://www.keycloak.org/server/all-provider-config#_sticky_session_encoder
@@ -290,6 +290,15 @@ module "keycloak" {
       }
     ]
   }]
+
+
+  alb_target_group_alarms_alarm_actions             = var.alarms_sns_topics_arns
+  alb_target_group_alarms_ok_actions                = var.alarms_sns_topics_arns
+  alb_target_group_alarms_insufficient_data_actions = var.alarms_sns_topics_arns
+  ecs_alarms_cpu_utilization_high_alarm_actions     = var.alarms_sns_topics_arns
+  ecs_alarms_cpu_utilization_high_ok_actions        = var.alarms_sns_topics_arns
+  ecs_alarms_memory_utilization_high_alarm_actions  = var.alarms_sns_topics_arns
+  ecs_alarms_memory_utilization_high_ok_actions     = var.alarms_sns_topics_arns
 
   context = module.label_keycloak.context
 }

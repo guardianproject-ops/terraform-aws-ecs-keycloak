@@ -83,6 +83,7 @@ module "example" {
 
   vpc_id                       = module.vpc.vpc_id
   public_subnet_ids            = module.subnets.public_subnet_ids
+  public_subnet_cidrs          = module.subnets.public_subnet_cidrs
   private_subnet_ids           = module.subnets.private_subnet_ids
   keycloak_acm_certificate_arn = ""
   db_keycloak_host             = module.db.address

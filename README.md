@@ -229,7 +229,6 @@ See [examples/simple](./examples/simple)
 | [aws_iam_policy_document.keycloak_task_secrets](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.tailscale_exec](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.tailscale_task](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_network_interface.alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/network_interface) | data source |
 | [aws_region.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
@@ -237,6 +236,7 @@ See [examples/simple](./examples/simple)
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_tag_map"></a> [additional\_tag\_map](#input\_additional\_tag\_map) | Additional key-value pairs to add to each map in `tags_as_list_of_maps`. Not added to `tags` or `id`.<br/>This is for some rare cases where resources want additional configuration of tags<br/>and therefore take a list of maps with tag key, value, and additional configuration. | `map(string)` | `{}` | no |
+| <a name="input_alarms_sns_topics_arns"></a> [alarms\_sns\_topics\_arns](#input\_alarms\_sns\_topics\_arns) | A list of SNS topic arns that will be the actions for cloudwatch alarms | `list(string)` | `[]` | no |
 | <a name="input_attributes"></a> [attributes](#input\_attributes) | ID element. Additional attributes (e.g. `workers` or `cluster`) to add to `id`,<br/>in the order they appear in the list. New attributes are appended to the<br/>end of the list. The elements of the list are joined by the `delimiter`<br/>and treated as a single ID element. | `list(string)` | `[]` | no |
 | <a name="input_context"></a> [context](#input\_context) | Single object for setting entire context at once.<br/>See description of individual variables for details.<br/>Leave string and numeric variables as `null` to use default value.<br/>Individual variable settings (non-null) override settings in context object,<br/>except for attributes, tags, and additional\_tag\_map, which are merged. | `any` | <pre>{<br/>  "additional_tag_map": {},<br/>  "attributes": [],<br/>  "delimiter": null,<br/>  "descriptor_formats": {},<br/>  "enabled": true,<br/>  "environment": null,<br/>  "id_length_limit": null,<br/>  "label_key_case": null,<br/>  "label_order": [],<br/>  "label_value_case": null,<br/>  "labels_as_tags": [<br/>    "unset"<br/>  ],<br/>  "name": null,<br/>  "namespace": null,<br/>  "regex_replace_chars": null,<br/>  "stage": null,<br/>  "tags": {},<br/>  "tenant": null<br/>}</pre> | no |
 | <a name="input_db_keycloak_host"></a> [db\_keycloak\_host](#input\_db\_keycloak\_host) | The postgresql host for keycloak | `string` | n/a | yes |
@@ -274,6 +274,7 @@ See [examples/simple](./examples/simple)
 | <a name="input_port_keycloak_web"></a> [port\_keycloak\_web](#input\_port\_keycloak\_web) | The port number for Keycloak web interface | `number` | `8443` | no |
 | <a name="input_port_tailscale_healthcheck"></a> [port\_tailscale\_healthcheck](#input\_port\_tailscale\_healthcheck) | The port number for Tailscale health check endpoint | `number` | `7801` | no |
 | <a name="input_private_subnet_ids"></a> [private\_subnet\_ids](#input\_private\_subnet\_ids) | The ids for the private subnets that EFS will be deployed into | `list(string)` | n/a | yes |
+| <a name="input_public_subnet_cidrs"></a> [public\_subnet\_cidrs](#input\_public\_subnet\_cidrs) | The cidr blocks for the public subnets that ECS will be deployed into | `list(string)` | n/a | yes |
 | <a name="input_public_subnet_ids"></a> [public\_subnet\_ids](#input\_public\_subnet\_ids) | The ids for the public subnets that ECS will be deployed into | `list(string)` | n/a | yes |
 | <a name="input_rds_iam_auth_enabled"></a> [rds\_iam\_auth\_enabled](#input\_rds\_iam\_auth\_enabled) | Whether or not IAM authentication to an RDS instance will be used. | `bool` | `true` | no |
 | <a name="input_rds_init_keycloak_db"></a> [rds\_init\_keycloak\_db](#input\_rds\_init\_keycloak\_db) | If true then the postgresql database for keycloak will be initialized using the RDS master credentials | `bool` | `true` | no |
@@ -298,8 +299,6 @@ See [examples/simple](./examples/simple)
 | Name | Description |
 |------|-------------|
 | <a name="output_alb"></a> [alb](#output\_alb) | n/a |
-| <a name="output_alb_enis"></a> [alb\_enis](#output\_alb\_enis) | n/a |
-| <a name="output_alb_enis_ips"></a> [alb\_enis\_ips](#output\_alb\_enis\_ips) | n/a |
 | <a name="output_cloudwatch_log_group_arn_keycloak"></a> [cloudwatch\_log\_group\_arn\_keycloak](#output\_cloudwatch\_log\_group\_arn\_keycloak) | Cloudwatch log group ARN for keycloak |
 | <a name="output_cloudwatch_log_group_arn_tailscale"></a> [cloudwatch\_log\_group\_arn\_tailscale](#output\_cloudwatch\_log\_group\_arn\_tailscale) | Cloudwatch log group ARN for tailscale |
 | <a name="output_cloudwatch_log_group_keycloak"></a> [cloudwatch\_log\_group\_keycloak](#output\_cloudwatch\_log\_group\_keycloak) | All outputs from `aws_cloudwatch_log_group.keycloak` |
@@ -309,6 +308,7 @@ See [examples/simple](./examples/simple)
 | <a name="output_keycloak_password"></a> [keycloak\_password](#output\_keycloak\_password) | n/a |
 | <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | The KMS Key ARN used for this deployment |
 | <a name="output_secrets_manager_secret_authkey_arn"></a> [secrets\_manager\_secret\_authkey\_arn](#output\_secrets\_manager\_secret\_authkey\_arn) | n/a |
+| <a name="output_secrets_manager_secret_authkey_id"></a> [secrets\_manager\_secret\_authkey\_id](#output\_secrets\_manager\_secret\_authkey\_id) | n/a |
 <!-- markdownlint-restore -->
 
 

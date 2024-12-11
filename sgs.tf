@@ -104,33 +104,33 @@ resource "aws_vpc_security_group_ingress_rule" "keycloak_tailscale_management" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "keycloak_http" {
-  count             = length(local.alb_actual_cidrs)
-  security_group_id = aws_security_group.keycloak[0].id
-  cidr_ipv4         = local.alb_actual_cidrs[count.index]
-  from_port         = local.port_keycloak_web
-  to_port           = local.port_keycloak_web
-  ip_protocol       = "tcp"
-  description       = "Allow web ingress from ALB"
+  count                        = module.this.enabled ? 1 : 0
+  security_group_id            = aws_security_group.keycloak[0].id
+  referenced_security_group_id = aws_security_group.alb[0].id
+  from_port                    = local.port_keycloak_web
+  to_port                      = local.port_keycloak_web
+  ip_protocol                  = "tcp"
+  description                  = "Allow web ingress from ALB"
 }
 
 resource "aws_vpc_security_group_ingress_rule" "keycloak_cluster" {
-  count             = length(local.alb_actual_cidrs)
-  security_group_id = aws_security_group.keycloak[0].id
-  cidr_ipv4         = local.alb_actual_cidrs[count.index]
-  from_port         = local.port_keycloak_cluster
-  to_port           = local.port_keycloak_cluster
-  ip_protocol       = "tcp"
-  description       = "Allow keycloak clustering on our local subnets"
+  count                        = module.this.enabled ? 1 : 0
+  security_group_id            = aws_security_group.keycloak[0].id
+  referenced_security_group_id = aws_security_group.alb[0].id
+  from_port                    = local.port_keycloak_cluster
+  to_port                      = local.port_keycloak_cluster
+  ip_protocol                  = "tcp"
+  description                  = "Allow keycloak clustering on our local subnets"
 }
 
 resource "aws_vpc_security_group_ingress_rule" "keycloak_management" {
-  count             = length(local.alb_actual_cidrs)
-  security_group_id = aws_security_group.keycloak[0].id
-  cidr_ipv4         = local.alb_actual_cidrs[count.index]
-  from_port         = local.port_keycloak_management
-  to_port           = local.port_keycloak_management
-  ip_protocol       = "tcp"
-  description       = "Allow management ingress from ALB for health checks"
+  count                        = module.this.enabled ? 1 : 0
+  security_group_id            = aws_security_group.keycloak[0].id
+  referenced_security_group_id = aws_security_group.alb[0].id
+  from_port                    = local.port_keycloak_management
+  to_port                      = local.port_keycloak_management
+  ip_protocol                  = "tcp"
+  description                  = "Allow management ingress from ALB for health checks"
 }
 
 resource "aws_vpc_security_group_ingress_rule" "keycloak_tailscale" {

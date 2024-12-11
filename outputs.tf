@@ -42,15 +42,11 @@ output "alb" {
   value = module.alb
 }
 
-output "alb_enis" {
-  value = data.aws_network_interface.alb[*]
-}
-
-output "alb_enis_ips" {
-  value = local.alb_actual_cidrs
-}
-
-
 output "secrets_manager_secret_authkey_arn" {
   value = try(aws_secretsmanager_secret.authkey[0].arn, "")
+}
+
+
+output "secrets_manager_secret_authkey_id" {
+  value = try(aws_secretsmanager_secret.authkey[0].id, "")
 }
