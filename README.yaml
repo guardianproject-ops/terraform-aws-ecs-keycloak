@@ -1,0 +1,72 @@
+name: terraform-aws-ecs-keycloak
+license: GPL3
+gitlab_repo: guardianproject-ops/terraform-aws-ecs-keycloak
+
+description: Terraform module for deploying Keycloak to AWS ECS w/ Fargate
+
+introduction: |-
+
+  ## Goals of this module
+
+  * Run a stable and reliable keycloak that doesn't need to scale beyond 100 users
+  * Trading cost for low effort on going maintenance
+      * We want this stack to run without having to worry about OS patching or other issues ec2 instance related issues
+      * We don't mind spending 20-40% more per month on fixed infra costs to achieve this
+  * Security with escape hatches
+      * This keycloak will be our IdP or wide including acting as the IdP for AWS and Gitlab, where keycloak itself is hosted
+      * So there must be documented escape hatches and break-glass procedures, these are documented in our internal docs.
+
+
+  ## Architecture Decisions
+
+  * Run on ECS
+      * Pros: only need to worry about containers, no need to manage instances or disks. 
+      * Cons: bigger up-front dev time to develop this stack, wonky restrictions compared to normally running on an instance
+      
+      
+  * ECS containers are in public subnets, but locked down
+      * We do this to avoid NAT Gateway charges. Security groups are tuned carefully. Bonus benefit is tailscale is faster as it doesn't use DERP.
+      
+      
+  * Keycloak behind ALB with self signed certs
+      * ALB uses an ACM cert, keycloak exposes its HTTPS using a self-signed (generated here in terraform)
+      * As per [AWS' ALB docs][alb1]:
+      
+      > The load balancer establishes TLS connections with the targets using certificates that you install on the targets. The load balancer does not validate these certificates. Therefore, you can use self-signed certificates or certificates that have expired. Because the load balancer, and its targets are in a virtual private cloud (VPC), traffic between the load balancer and the targets is authenticated at the packet level, so it is not at risk of man-in-the-middle attacks or spoofing even if the certificates on the targets are not valid. Traffic that leaves AWS will not have these same protections, and additional steps may be needed to secure traffic further.
+      * This lets us tick the box of full transit encryption
+      
+      
+  * Keycloak admin and management API is not exposed to the public, but only over tailscale
+      * This means to login and edit Realms, you must access Keycloak over tailscale
+      * What happens when tailscale is down or tailscale+keycloak auth is broken? Refer to our documented break-glass procedures (TL;DR: break glass on AWS account, edit ALB target group to remove path 
+      
+
+
+  ### Some implementation notes
+
+  * Tailscalesd supports AWS SSM storage of state but multiple bugs make this not useable in the container image
+      * ref: https://github.com/tailscale/tailscale/issues/13409
+      * ref: https://github.com/tailscale/tailscale/issues/9513
+      * Result: We mount an EFS volume into the tailscale container so it can store its state
+
+  * The tailscale auth-key is stored in AWS Secrets Manager, we use our [lambda that rotates auth keys][ts-rotate] to rotate the auth key regularly and bypass expiry. The auth-key (and the OIDC creds that power the lambda) are locked down such that all nodes that use the auth key must have the given tags.
+
+  * We use two long-running services: keycloak, and tailscale. We do this because it lets us horizontally scale keycloak with more container instances, while keeping a single internal-ingress.
+  * tailscale runs a in a single container and provides an internal tailnet reverse proxy to the keycloak upstream
+
+  [ts-rotate]: https://gitlab.com/guardianproject-ops/terraform-aws-lambda-secrets-manager-tailscale
+  [alb1]: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html#target-group-routing-configuration
+
+usage: |-
+
+  See [examples/simple](./examples/simple)
+
+
+include:
+  - docs/terraform.md
+
+contributors:
+  - name: "Abel Luck"
+    gitlab: "abelxluck"
+    gravatar: 0f605397e0ead93a68e1be26dc26481a
+
