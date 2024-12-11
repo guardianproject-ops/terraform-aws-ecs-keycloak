@@ -40,24 +40,6 @@ module "subnets" {
   attributes                      = ["vpc", "subnet"]
 }
 
-resource "aws_security_group" "rds" {
-  vpc_id = module.vpc.vpc_id
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = local.rds_allow_access_cidr_blocks
-  }
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = module.this.tags
-}
-
 ################
 # RDS / DB
 ################

@@ -171,12 +171,6 @@ The arn for the ACM certificate used to provide TLS for your keycloak instance
 EOT
 }
 
-variable "db_keycloak_user" {
-  type        = string
-  default     = "keycloak"
-  description = "The password for the keycloak account on the postgres instance"
-}
-
 variable "rds_iam_auth_enabled" {
   type        = bool
   default     = true
@@ -232,8 +226,15 @@ EOT
 }
 
 
+variable "db_keycloak_user" {
+  type        = string
+  default     = "keycloak"
+  description = "The password for the keycloak account on the postgres instance"
+}
+
 variable "db_keycloak_name" {
   type        = string
+  default     = "keycloak"
   description = <<EOT
 The postgresql db name for keycloak
 EOT
