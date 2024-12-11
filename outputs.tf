@@ -18,20 +18,19 @@ output "cloudwatch_log_group_name_keycloak" {
   value       = join("", aws_cloudwatch_log_group.keycloak[*].name)
 }
 
-
 output "cloudwatch_log_group_tailscale" {
   description = "All outputs from `aws_cloudwatch_log_group.tailscale`"
-  value       = aws_cloudwatch_log_group.tailscale
+  value       = module.service_tailscale.cloudwatch_log_group_tailscale
 }
 
 output "cloudwatch_log_group_arn_tailscale" {
   description = "Cloudwatch log group ARN for tailscale"
-  value       = join("", aws_cloudwatch_log_group.tailscale[*].arn)
+  value       = module.service_tailscale.cloudwatch_log_group_arn_tailscale
 }
 
 output "cloudwatch_log_group_name_tailscale" {
   description = "Cloudwatch log group name for tailscale"
-  value       = join("", aws_cloudwatch_log_group.tailscale[*].name)
+  value       = module.service_tailscale.cloudwatch_log_group_name_tailscale
 }
 
 output "keycloak_password" {
@@ -43,10 +42,9 @@ output "alb" {
 }
 
 output "secrets_manager_secret_authkey_arn" {
-  value = try(aws_secretsmanager_secret.authkey[0].arn, "")
+  value = module.service_tailscale.secrets_manager_secret_authkey_arn
 }
 
-
 output "secrets_manager_secret_authkey_id" {
-  value = try(aws_secretsmanager_secret.authkey[0].id, "")
+  value = module.service_tailscale.secrets_manager_secret_authkey_id
 }

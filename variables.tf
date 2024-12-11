@@ -36,7 +36,6 @@ The ids for the private subnets that EFS will be deployed into
 EOT
 }
 
-
 variable "log_group_retention_in_days" {
   default     = 30
   type        = number
@@ -269,15 +268,6 @@ The postgresql password for keycloak, when not using IAM authentication
 EOT
 }
 
-
-variable "port_efs_tailscale_state" {
-  type        = number
-  default     = 2049
-  description = <<EOT
-The port number at which the tailscale state efs mount is available
-EOT
-}
-
 variable "port_keycloak_cluster" {
   type        = number
   default     = 7800
@@ -299,14 +289,6 @@ variable "port_keycloak_management" {
   default     = 9000
   description = <<EOT
 The port number for Keycloak management interface
-EOT
-}
-
-variable "port_tailscale_healthcheck" {
-  type        = number
-  default     = 7801
-  description = <<EOT
-The port number for Tailscale health check endpoint
 EOT
 }
 

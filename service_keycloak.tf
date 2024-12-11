@@ -325,7 +325,6 @@ data "aws_iam_policy_document" "keycloak_exec" {
     ]
     resources = compact([
       aws_ssm_parameter.keycloak_password[0].arn,
-      aws_secretsmanager_secret.authkey[0].arn,
       local.rds_master_user_secret_arn,
       aws_ssm_parameter.keycloak_tls_cert[0].arn,
       aws_ssm_parameter.keycloak_tls_key[0].arn,

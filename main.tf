@@ -28,14 +28,12 @@ locals {
   db_addr                    = var.db_keycloak_host
   db_port                    = var.db_keycloak_port
   #rds_iam_url                 = "jdbc:aws-wrapper:postgresql://${local.db_addr}:${local.db_port}/${var.db_keycloak_name}?wrapperPlugins=iam&ssl=true&sslmode=require"
-  rds_iam_url                = var.rds_iam_auth_enabled ? "jdbc:aws-wrapper:postgresql://${local.db_addr}:${local.db_port}/${var.db_keycloak_name}?wrapperPlugins=iam&ssl=true&sslmode=verify-full&sslrootcert=/opt/keycloak/rds-global-bundle.pem" : ""
-  rds_iam_user_arn           = var.rds_iam_auth_enabled ? "arn:aws:rds-db:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:dbuser:${var.rds_resource_id}/${var.db_keycloak_user}" : null
-  db_url                     = var.rds_iam_auth_enabled ? local.rds_iam_url : "jdbc:postgresql://${local.db_addr}:${local.db_port}/${var.db_keycloak_name}"
-  port_efs_tailscale_state   = var.port_efs_tailscale_state
-  port_keycloak_cluster      = var.port_keycloak_cluster
-  port_keycloak_web          = var.port_keycloak_web
-  port_keycloak_management   = var.port_keycloak_management
-  port_tailscale_healthcheck = var.port_tailscale_healthcheck
+  rds_iam_url              = var.rds_iam_auth_enabled ? "jdbc:aws-wrapper:postgresql://${local.db_addr}:${local.db_port}/${var.db_keycloak_name}?wrapperPlugins=iam&ssl=true&sslmode=verify-full&sslrootcert=/opt/keycloak/rds-global-bundle.pem" : ""
+  rds_iam_user_arn         = var.rds_iam_auth_enabled ? "arn:aws:rds-db:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:dbuser:${var.rds_resource_id}/${var.db_keycloak_user}" : null
+  db_url                   = var.rds_iam_auth_enabled ? local.rds_iam_url : "jdbc:postgresql://${local.db_addr}:${local.db_port}/${var.db_keycloak_name}"
+  port_keycloak_cluster    = var.port_keycloak_cluster
+  port_keycloak_web        = var.port_keycloak_web
+  port_keycloak_management = var.port_keycloak_management
 }
 resource "aws_s3_bucket" "keycloak_clustering" {
   count  = module.this.enabled ? 1 : 0
@@ -107,14 +105,6 @@ module "label_ssm_params" {
   version    = "0.25.0"
   delimiter  = "/"
   attributes = ["keycloak"]
-  context    = module.this.context
-}
-
-module "label_ssm_params_tailscale" {
-  source     = "cloudposse/label/null"
-  version    = "0.25.0"
-  delimiter  = "/"
-  attributes = ["tailscale"]
   context    = module.this.context
 }
 
@@ -217,27 +207,11 @@ module "label_log_group_keycloak" {
   context    = module.this.context
 }
 
-module "label_log_group_tailscale" {
-  source     = "cloudposse/label/null"
-  version    = "0.25.0"
-  delimiter  = "/"
-  attributes = ["tailscale"]
-  context    = module.this.context
-}
-
 module "label_log_group_secrets_init" {
   source     = "cloudposse/label/null"
   version    = "0.25.0"
   delimiter  = "/"
   attributes = ["secrets-init"]
-  context    = module.this.context
-}
-
-module "label_log_group_tailscale_init" {
-  source     = "cloudposse/label/null"
-  version    = "0.25.0"
-  delimiter  = "/"
-  attributes = ["tailscale-init"]
   context    = module.this.context
 }
 
@@ -256,23 +230,9 @@ resource "aws_cloudwatch_log_group" "keycloak" {
   tags              = module.this.tags
 }
 
-resource "aws_cloudwatch_log_group" "tailscale" {
-  count             = module.this.enabled ? 1 : 0
-  name              = "/${module.label_log_group_tailscale.id}"
-  retention_in_days = var.log_group_retention_in_days
-  tags              = module.this.tags
-}
-
 resource "aws_cloudwatch_log_group" "secrets_init" {
   count             = module.this.enabled ? 1 : 0
   name              = "/${module.label_log_group_secrets_init.id}"
-  retention_in_days = var.log_group_retention_in_days
-  tags              = module.this.tags
-}
-
-resource "aws_cloudwatch_log_group" "tailscale_init" {
-  count             = module.this.enabled ? 1 : 0
-  name              = "/${module.label_log_group_tailscale_init.id}"
   retention_in_days = var.log_group_retention_in_days
   tags              = module.this.tags
 }
