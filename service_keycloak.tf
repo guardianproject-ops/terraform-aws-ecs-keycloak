@@ -264,7 +264,7 @@ module "keycloak" {
     module.alb.https_listener_arn,
   ]
   # ref: https://www.keycloak.org/server/reverseproxy#_exposed_path_recommendations
-  alb_ingress_unauthenticated_paths = ["/realms", "/resources", "/robots.txt"]
+  alb_ingress_unauthenticated_paths = ["/realms/*", "/resources/*", "/robots.txt"]
   alb_stickiness_cookie_duration    = 24 * 60 * 60
   alb_stickiness_enabled            = true
   alb_stickiness_type               = "app_cookie"
