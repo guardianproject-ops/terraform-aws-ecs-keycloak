@@ -118,7 +118,11 @@ The table below correctly indicates which inputs are required.
 
 
 
-See [examples/simple](./examples/simple)
+For a example usage, please see [examples/simple](./examples/simple)
+
+When deploying for the first time, the tailscale ingress will not be able to connect to the the keycloak service via Service Connect, because the
+keycloak service is created after the the tailscale ingress service. This is a limitation of AWS Service Connect. The workaround is to force a redeployment
+of the tailcscale ingress service after the keycloak service comes online.
 
 
 
