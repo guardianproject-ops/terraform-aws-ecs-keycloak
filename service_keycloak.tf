@@ -43,8 +43,8 @@ locals {
       value = "public"
     },
     {
-      # username for the temporary keycloak admin used to bootstrpa the instance
-      name  = "KEYCLOAK_ADMIN"
+      # username for the temporary keycloak admin used to bootstrap the instance
+      name  = "KC_BOOTSTRAP_ADMIN_USERNAME"
       value = var.keycloak_admin_username
     },
     {
@@ -155,8 +155,8 @@ module "keycloak_def" {
 
   secrets = [
     {
-      # password for the temporary keycloak admin used to bootstrpa the instance
-      name      = "KEYCLOAK_ADMIN_PASSWORD"
+      # password for the temporary keycloak admin used to bootstrap the instance
+      name      = "KC_BOOTSTRAP_ADMIN_PASSWORD"
       valueFrom = aws_ssm_parameter.keycloak_password[0].arn
     }
   ]

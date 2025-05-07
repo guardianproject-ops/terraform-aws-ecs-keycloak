@@ -18,7 +18,7 @@ module "postgres_init_sidecar" {
     "/bin/bash",
     "-c",
     <<-EOT
-    set -ex -o pipefail
+    set -e -o pipefail
 
     echo "Postgres init container starting"
     echo "Installing dependencies..."

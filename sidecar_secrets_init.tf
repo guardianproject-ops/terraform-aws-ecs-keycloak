@@ -29,7 +29,7 @@ module "secrets_init_sidecar" {
   command = [
     "-c",
     <<-EOT
-    set -ex -o pipefail
+    set -e -o pipefail
     aws ssm get-parameter \
         --with-decryption \
         --name "$${SSM_PARAM_CERT_B64}" \
