@@ -309,3 +309,17 @@ variable "exec_enabled" {
   description = "Specifies whether to enable Amazon ECS Exec for the tasks within the service"
   default     = false
 }
+
+variable "redirect_keycloak_root" {
+  type = object({
+    host     = string
+    path     = string
+    port     = optional(number, 443)
+    protocol = optional(string, "https")
+    query    = optional(string)
+  })
+  default     = null
+  description = <<EOT
+When a users visits the root path of the keycloak instance, they will be redirected to this URL. This is useful for redirecting to a realm's login page. If null, no redirect will be performed.
+EOT
+}

@@ -249,3 +249,25 @@ resource "aws_service_discovery_http_namespace" "this" {
   description = "The service discovery namespace for ${module.this.id}"
   tags        = module.this.tags
 }
+
+resource "aws_lb_listener_rule" "redirect_keycloak_root" {
+  count        = module.this.enabled && var.redirect_keycloak_root != null ? 1 : 0
+  listener_arn = module.alb.https_listener_arn
+  priority     = 999
+  action {
+    type = "redirect"
+    redirect {
+      status_code = "HTTP_302"
+      host        = var.redirect_keycloak_root.host
+      path        = var.redirect_keycloak_root.path
+      protocol    = upper(var.redirect_keycloak_root.protocol)
+      port        = var.redirect_keycloak_root.port
+      query       = var.redirect_keycloak_root.query
+    }
+  }
+  condition {
+    path_pattern {
+      values = ["/"]
+    }
+  }
+}
