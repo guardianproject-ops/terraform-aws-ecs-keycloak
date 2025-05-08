@@ -271,3 +271,21 @@ resource "aws_lb_listener_rule" "redirect_keycloak_root" {
     }
   }
 }
+
+resource "aws_lb_listener_rule" "redirect_http_to_https" {
+  listener_arn = module.alb.http_listener_arn
+  priority     = 100
+  action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+  condition {
+    path_pattern {
+      values = ["/*"]
+    }
+  }
+}
