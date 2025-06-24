@@ -1,8 +1,9 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = ">= 5.0.0"
+      source = "hashicorp/aws"
+      # TODO: https://github.com/cloudposse/terraform-aws-ecs-cluster/issues/65
+      version = ">= 5.0.0, < 6.0.0"
     }
     tls = {
       source  = "hashicorp/tls"
