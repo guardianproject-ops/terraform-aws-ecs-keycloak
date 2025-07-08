@@ -135,7 +135,7 @@ of the tailcscale ingress service after the keycloak service comes online.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0.0, < 6.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.6.3 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 4.0.6 |
 
@@ -143,7 +143,7 @@ of the tailcscale ingress service after the keycloak service comes online.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0.0, < 6.0.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.6.3 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | >= 4.0.6 |
 
@@ -179,6 +179,8 @@ of the tailcscale ingress service after the keycloak service comes online.
 | [aws_iam_policy.keycloak_task](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role_policy_attachment.keycloak_exec](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.keycloak_task](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_lb_listener_rule.redirect_http_to_https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
+| [aws_lb_listener_rule.redirect_keycloak_root](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_s3_bucket.keycloak_clustering](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket_public_access_block.keycloak_clustering](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_security_group.alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
@@ -256,6 +258,7 @@ of the tailcscale ingress service after the keycloak service comes online.
 | <a name="input_rds_master_user_secret_arn"></a> [rds\_master\_user\_secret\_arn](#input\_rds\_master\_user\_secret\_arn) | If true then the postgresql database for keycloak will be initialized using the RDS master credentials | `string` | `null` | no |
 | <a name="input_rds_master_username"></a> [rds\_master\_username](#input\_rds\_master\_username) | The username of the RDS master user | `string` | `""` | no |
 | <a name="input_rds_resource_id"></a> [rds\_resource\_id](#input\_rds\_resource\_id) | The RDS resource id , used when rds iam auth is enabled | `string` | `null` | no |
+| <a name="input_redirect_keycloak_root"></a> [redirect\_keycloak\_root](#input\_redirect\_keycloak\_root) | When a users visits the root path of the keycloak instance, they will be redirected to this URL. This is useful for redirecting to a realm's login page. If null, no redirect will be performed. | <pre>object({<br/>    host     = string<br/>    path     = string<br/>    port     = optional(number, 443)<br/>    protocol = optional(string, "https")<br/>    query    = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_regex_replace_chars"></a> [regex\_replace\_chars](#input\_regex\_replace\_chars) | Terraform regular expression (regex) string.<br/>Characters matching the regex will be removed from the ID elements.<br/>If not set, `"/[^a-zA-Z0-9-]/"` is used to remove all characters other than hyphens, letters and digits. | `string` | `null` | no |
 | <a name="input_stage"></a> [stage](#input\_stage) | ID element. Usually used to indicate role, e.g. 'prod', 'staging', 'source', 'build', 'test', 'deploy', 'release' | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags (e.g. `{'BusinessUnit': 'XYZ'}`).<br/>Neither the tag keys nor the tag values will be modified by this module. | `map(string)` | `{}` | no |
